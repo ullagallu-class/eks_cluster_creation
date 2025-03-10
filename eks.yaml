@@ -10,8 +10,8 @@ managedNodeGroups:
   - name: siva-ng
     instanceType: t3a.medium
     minSize: 1
-    maxSize: 3
-    desiredCapacity: 2
+    maxSize: 6
+    desiredCapacity: 6
     volumeSize: 20
     volumeType: gp3
     ssh:
