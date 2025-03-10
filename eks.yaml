@@ -8,7 +8,7 @@ metadata:
 
 managedNodeGroups:
   - name: siva-ng
-    instanceType: t3a.small
+    instanceType: t3a.medium
     minSize: 1
     maxSize: 3
     desiredCapacity: 2
@@ -20,6 +20,7 @@ managedNodeGroups:
     tags:
       Env: Dev
       k8s.io/cluster-autoscaler/eks-cluster: 'true'
+    spot: true
 
 cloudWatch:
   clusterLogging:
