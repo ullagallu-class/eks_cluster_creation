@@ -1,0 +1,46 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: eks-cluster
+  region: us-east-1
+
+vpc:
+  id: "vpc-xxxxxxxx" # Optional: Specify an existing VPC
+  subnets:
+    public:
+      us-east-1a: { id: "subnet-xxxxxxx" }
+      us-east-1b: { id: "subnet-xxxxxxx" }
+
+managedNodeGroups:
+  - name: eks-cluster-ng
+    instanceType: t3.small
+    minSize: 1
+    maxSize: 3
+    desiredCapacity: 2
+    volumeSize: 20
+    volumeType: gp3
+    ssh:
+      allow: true
+      publicKeyName: kube-ssh
+    tags:
+      Env: Dev
+      k8s.io/cluster-autoscaler/eks-cluster: 'true'  # Corrected tag
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEKSLoadBalancerControllerPolicy  # More secure than ElasticLoadBalancingFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      withAddonPolicies:
+        autoScaler: true
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+
+encryptionConfig:
+  - resources: ["secrets"]
+    provider:
+      keyARN: "arn:aws:kms:us-east-1:<account-id>:key/<kms-key-id>"
